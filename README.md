@@ -19,3 +19,6 @@ and
 docker-compose up
 
 Should get you up and running. 
+
+If you already have mongo running on the default port you can use:
+    

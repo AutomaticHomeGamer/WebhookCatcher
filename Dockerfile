@@ -4,6 +4,7 @@ COPY package.json /usr/src/app
 WORKDIR /usr/src/app
 COPY . /usr/src/app
 RUN npm install
-
-EXPOSE 8000
-CMD ["node", "Webhook.js"]
+ENV webPort=8000
+ENV mongoPort=27017
+EXPOSE ${webPort} 
+CMD ["sh", "-c", "node Webhook.js ${mongoPort} ${webPort}" ]

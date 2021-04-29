@@ -11,6 +11,15 @@ var http = require('http');
 var MongoClient = require('mongodb').MongoClient;
 var sanitize = require('mongo-sanitize');
 
+var myArgs = process.argv.slice(2);
+console.log(`MyArgs: ${myArgs}`);
+if(myArgs[0]){
+        mongoPort = myArgs[0];
+}
+if(myArgs[1]){
+        portServer = myArgs[1];
+}
+
 var mongoConnectionURL = `mongodb://mongo:${mongoPort}/Webhook`;
 //The //mongo comes from the docker-compose.yml 
 
@@ -48,7 +57,26 @@ app.post("/webhook/:name", function(req, res){
                 .then( (hooks) => {
                         name = sanitize(req.params.name)
                         var ts = Date.now();
-                        hooks.insertOne({time: ts, hook: name, data: sanitize(req.body)}, function(){ res.send("204 No Content") });
+                        hooks.insertOne({time: ts, hook: name, headers: req.headers, data: sanitize(req.body)}, function(){ res.send("204 No Content") });
+                } )
+                .catch(function(err){ console.log(err) });
+
+});
+
+app.put("/webhok/:name", function(req, res){
+        console.log(`Webhook hit: ${req.params.name}`);
+        callback = function(){
+                res.send("204 No Content");
+        }
+
+        MongoClient.connect(mongoConnectionURL , { useUnifiedTopology: true })
+                .then( (db) => {
+                        return db.db().collection('hooks');
+                })
+                .then( (hooks) => {
+                        name = sanitize(req.params.name)
+                        var ts = Date.now();
+                        hooks.insertOne({time: ts, hook: name, headers: req.headers, data: sanitize(req.body)}, function(){ res.send("204 No Content") });
                 } )
                 .catch(function(err){ console.log(err) });
 
@@ -68,7 +96,7 @@ app.get("/webhook/:name/display", function(req, res){
                 if(err) throw err;
 
                 db.db().collection("hooks", function(err, collection){
-                        db.db().collection("hooks").find({"hook": sanitize(req.params.name)}).toArray(function(err,arr){
+                        db.db().collection("hooks").find({"hook": sanitize(req.params.name)}).sort({$natural:-1}).toArray(function(err,arr){
                                     res.send(arr);
                                  });
                         });
