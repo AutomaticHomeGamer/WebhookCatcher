@@ -1,0 +1,25 @@
+version: "3"
+services:
+       Webhook:
+           container_name: webhook
+           image: gwoodford/webhook-tool:latest
+           restart: always
+           build: .
+           ports:
+             - "8003:8003"
+           links:
+             - webhookMongo
+           environment: 
+             webPort: 8003
+             mongoPort: 27019
+       webhookMongo:
+             container_name: webhookMongo
+             image: mongo:latest
+             volumes:
+               - data:/data/db
+             ports:
+               - 27019:27019
+             command: mongod --port 27019
+volumes:
+  data:
+              
