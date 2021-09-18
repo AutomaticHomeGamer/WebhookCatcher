@@ -2,7 +2,7 @@ version: "3"
 services:
        Webhook:
            container_name: webhook
-           image: gwoodford/webhook-tool:latest
+           image: gwoodford/webhook-tool-armv8:latest
            restart: always
            build: .
            ports:
@@ -14,7 +14,7 @@ services:
              mongoPort: 27019
        webhookMongo:
              container_name: webhookMongo
-             image: mongo:latest
+             image: mongo:bionic
              volumes:
                - data:/data/db
              ports:

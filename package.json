@@ -9,6 +9,8 @@
     "http": "0.0.1-security",
     "mongo-sanitize": "^1.1.0",
     "mongodb": "^3.6.3",
+    "pm2": "^5.1.1",
+    "pug": "2.0.3",
     "rquest": "^0.1.0"
   },
   "scripts": {
